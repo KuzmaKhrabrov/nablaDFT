@@ -18,14 +18,18 @@ class ModelRegistry:
 
     default_ckpt_dir = Path("./checkpoints")
 
-    def __init__(self):
-        with open(nablaDFT.__path__[0] + "/links/models_checkpoints.json") as fin:
+    def __init__(self, nabladft_path=""):
+        if not nabladft_path:
+            self.path = nablaDFT.__path__[0]
+        else:
+            self.path = nabladft_path
+        with open(self.path + "/links/models_checkpoints.json") as fin:
             content = json.load(fin)
         self._model_checkpoints = content["checkpoints"]
         self._model_checkpoints_etag = content["etag"]
 
         self._pretrained_model_cfg = {}
-        cfg_paths = (Path(nablaDFT.__path__[0]) / "../config/model/").glob("*")
+        cfg_paths = (Path(self.path) / "../config/model/").glob("*")
         for cfg_path in cfg_paths:
             cfg = OmegaConf.load(cfg_path)
             self._pretrained_model_cfg[cfg.model_name] = cfg
